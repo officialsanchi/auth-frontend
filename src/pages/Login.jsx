@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+
 import AuthInput from "../components/AuthInput";
 import { validatePassword } from "../utils/validation";
 import { login } from "../services/api";
 
 const Login = () => {
     const navigate = useNavigate();
-    const location = useLocation();
 
     const [formData, setFormData] = useState({
         identifier: "",
@@ -16,7 +16,6 @@ const Login = () => {
 
     const [errors, setErrors] = useState({});
     const [formError, setFormError] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
     // ==========================================
@@ -60,38 +59,6 @@ const Login = () => {
 
         return newErrors;
     };
-
-    // ==========================================
-    // RESTORE REMEMBERED IDENTIFIER
-    // ==========================================
-    useEffect(() => {
-        const rememberedIdentifier =
-            localStorage.getItem("rememberedIdentifier");
-
-        if (rememberedIdentifier) {
-            setFormData((previous) => ({
-                ...previous,
-                identifier: rememberedIdentifier,
-            }));
-
-            setRememberMe(true);
-        }
-    }, []);
-
-    // ==========================================
-    // REDIRECT ALREADY AUTHENTICATED USERS
-    // ==========================================
-    useEffect(() => {
-        const token =
-            localStorage.getItem("token") ||
-            sessionStorage.getItem("token");
-
-        if (token) {
-            navigate("/dashboard", {
-                replace: true,
-            });
-        }
-    }, [navigate]);
 
     // ==========================================
     // HANDLE INPUT CHANGES
@@ -152,6 +119,10 @@ const Login = () => {
             return error.response.data.error;
         }
 
+        if (error?.response?.status === 400) {
+            return "Invalid login request. Please check your details.";
+        }
+
         if (error?.response?.status === 401) {
             return "Invalid email/username or password.";
         }
@@ -169,7 +140,7 @@ const Login = () => {
         }
 
         if (error?.code === "ERR_NETWORK") {
-            return "Unable to connect to the server. Make sure your Spring Boot backend is running.";
+            return "Unable to connect to the authentication server.";
         }
 
         return "Unable to sign in. Please check your credentials and try again.";
@@ -194,84 +165,34 @@ const Login = () => {
             return;
         }
 
-        const identifier = formData.identifier.trim();
-
         const loginPayload = {
-            identifier,
+            identifier: formData.identifier.trim(),
             password: formData.password,
         };
 
         setIsLoading(true);
 
         try {
+            console.log("Sending login request:", {
+                identifier: loginPayload.identifier,
+                password: "********",
+            });
+
             const response = await login(loginPayload);
 
-            console.log("Login response:", response.data);
+            console.log("Login successful:", response.data);
 
-            // ==========================================
-            // GET JWT TOKEN FROM BACKEND
-            // ==========================================
-            const token =
-                response?.data?.token ||
-                response?.data?.accessToken;
+            /*
+             * Authentication is NOT stored in localStorage
+             * or sessionStorage.
+             *
+             * The backend is responsible for maintaining
+             * the authenticated session/cookie.
+             *
+             * Axios uses withCredentials: true in api.js
+             * so browser cookies can be sent with requests.
+             */
 
-            if (!token) {
-                throw new Error(
-                    "Authentication token was not returned by the server."
-                );
-            }
-
-            // ==========================================
-            // STORE JWT TOKEN
-            // ==========================================
-            const storage = rememberMe
-                ? localStorage
-                : sessionStorage;
-
-            storage.setItem("token", token);
-
-            // Remove token from the other storage
-            if (rememberMe) {
-                sessionStorage.removeItem("token");
-            } else {
-                localStorage.removeItem("token");
-            }
-
-            // ==========================================
-            // REMEMBER USER IDENTIFIER
-            // ==========================================
-            if (rememberMe) {
-                localStorage.setItem(
-                    "rememberedIdentifier",
-                    identifier
-                );
-            } else {
-                localStorage.removeItem(
-                    "rememberedIdentifier"
-                );
-            }
-
-            // ==========================================
-            // STORE USER INFORMATION
-            // ==========================================
-            if (response?.data?.username) {
-                localStorage.setItem(
-                    "username",
-                    response.data.username
-                );
-            }
-
-            if (response?.data?.profilePhotoUrl) {
-                localStorage.setItem(
-                    "profilePhotoUrl",
-                    response.data.profilePhotoUrl
-                );
-            }
-
-            // ==========================================
-            // SUCCESSFUL LOGIN
-            // ALWAYS GO TO DASHBOARD
-            // ==========================================
             navigate("/dashboard", {
                 replace: true,
             });
@@ -279,19 +200,7 @@ const Login = () => {
         } catch (error) {
             console.error("Login error:", error);
 
-            if (
-                error?.message?.includes(
-                    "Authentication token"
-                )
-            ) {
-                setFormError(
-                    "Login succeeded, but the server did not return an authentication token."
-                );
-            } else {
-                setFormError(
-                    getErrorMessage(error)
-                );
-            }
+            setFormError(getErrorMessage(error));
         } finally {
             setIsLoading(false);
         }
@@ -405,6 +314,7 @@ const Login = () => {
                             <div
                                 className="form-error"
                                 role="alert"
+                                aria-live="polite"
                             >
                                 <span>!</span>
 
@@ -447,27 +357,6 @@ const Login = () => {
                             />
 
                             <div className="form-options">
-
-                                <label className="checkbox-label">
-
-                                    <input
-                                        type="checkbox"
-                                        checked={rememberMe}
-                                        onChange={(event) =>
-                                            setRememberMe(
-                                                event.target.checked
-                                            )
-                                        }
-                                        disabled={isLoading}
-                                    />
-
-                                    <span className="custom-checkbox" />
-
-                                    <span>
-                                        Remember me
-                                    </span>
-
-                                </label>
 
                                 <Link
                                     to="/forgot-password"
