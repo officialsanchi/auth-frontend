@@ -13,85 +13,58 @@ import Profile from "./components/Profile";
 function App() {
     return (
         <Routes>
-
-            {/* ================================
-                DEFAULT ROUTE
-            ================================= */}
+            {/* Default route */}
             <Route
                 path="/"
-                element={<Navigate to="/register" replace />}
+                element={<Navigate to="/login" replace />}
             />
 
-            {/* ================================
-                AUTHENTICATION
-            ================================= */}
-
-            {/* Registration */}
-            <Route
-                path="/register"
-                element={<Register />}
-            />
-
-            {/* OTP Verification */}
-            <Route
-                path="/verify-otp"
-                element={<VerifyOtp />}
-            />
-
-            {/* Keep this only if some old code still uses /verify-email */}
+            {/* Authentication routes */}
+            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
             <Route
                 path="/verify-email"
                 element={<Navigate to="/verify-otp" replace />}
             />
-
-            {/* Login */}
-            <Route
-                path="/login"
-                element={<Login />}
-            />
-
-            {/* Forgot Password */}
             <Route
                 path="/forgot-password"
                 element={<ForgotPassword />}
             />
-
-            {/* Reset Password */}
             <Route
                 path="/reset-password"
                 element={<ResetPassword />}
             />
 
-            {/* ================================
-                USER AREA
-            ================================= */}
-<Route
-    path="/dashboard"
-    element={
-        <ProtectedRoute>
-            <Dashboard />
-        </ProtectedRoute>
-    }
-/>
-
-<Route
-    path="/profile"
-    element={
-        <ProtectedRoute>
-            <Profile />
-        </ProtectedRoute>
-    }
-/>
-
-            {/* ================================
-                UNKNOWN URL
-            ================================= */}
-
+            {/* Protected user routes */}
             <Route
-                path="*"
-                element={<Navigate to="/register" replace />}
+                path="/dashboard"
+                element={
+                    <ProtectedRoute>
+                        <Dashboard />
+                    </ProtectedRoute>
+                }
             />
 
+            <Route
+                path="/home"
+                element={<Navigate to="/dashboard" replace />}
+            />
+
+            <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                }
+            />
+
+            {/* Unknown routes */}
+            <Route
+                path="*"
+                element={<Navigate to="/login" replace />}
+            />
         </Routes>
     );
 }

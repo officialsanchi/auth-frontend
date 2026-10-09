@@ -2,7 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuthUser } from "../hooks/useAuthUser";
 import authStorage from "../services/authStorage";
-import StatusCard from "../components/StatusCard";
+import "./Profile.css"; // adjust the path to wherever you save Profile.css
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -72,6 +72,13 @@ const Profile = () => {
         { label: "Account lock", ok: user.accountNonLocked, trueLabel: "Not locked", falseLabel: "Locked" },
         { label: "Account validity", ok: user.accountNonExpired, trueLabel: "Valid", falseLabel: "Expired" },
         { label: "Credentials", ok: user.credentialsNonExpired, trueLabel: "Valid", falseLabel: "Expired" },
+    ];
+
+    const detailItems = [
+        { label: "Full name", value: user.fullName },
+        { label: "Username", value: `@${user.username}` },
+        { label: "Email address", value: user.email },
+        { label: "Phone number", value: user.phoneNumber || "Not provided" },
     ];
 
     return (
@@ -145,22 +152,12 @@ const Profile = () => {
                     </div>
 
                     <div className="profile-details-grid">
-                        <div className="profile-detail-card">
-                            <span>Full name</span>
-                            <strong>{user.fullName}</strong>
-                        </div>
-                        <div className="profile-detail-card">
-                            <span>Username</span>
-                            <strong>@{user.username}</strong>
-                        </div>
-                        <div className="profile-detail-card">
-                            <span>Email address</span>
-                            <strong>{user.email}</strong>
-                        </div>
-                        <div className="profile-detail-card">
-                            <span>Phone number</span>
-                            <strong>{user.phoneNumber || "Not provided"}</strong>
-                        </div>
+                        {detailItems.map((item) => (
+                            <div className="profile-detail-card" key={item.label}>
+                                <span>{item.label}</span>
+                                <strong>{item.value}</strong>
+                            </div>
+                        ))}
                     </div>
                 </section>
 
@@ -174,7 +171,16 @@ const Profile = () => {
 
                     <div className="profile-status-grid">
                         {statusItems.map((item) => (
-                            <StatusCard key={item.label} {...item} />
+                            <div
+                                key={item.label}
+                                className={`profile-status-card ${item.ok ? "ok" : "bad"}`}
+                            >
+                                <div className="profile-status-icon">{item.ok ? "✓" : "✕"}</div>
+                                <div className="profile-status-text">
+                                    <span>{item.label}</span>
+                                    <strong>{item.ok ? item.trueLabel : item.falseLabel}</strong>
+                                </div>
+                            </div>
                         ))}
                     </div>
                 </section>
