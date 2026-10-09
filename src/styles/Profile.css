@@ -1,0 +1,283 @@
+/* Profile page styles — add alongside your existing dashboard CSS.
+   Import in Profile.jsx:  import "./Profile.css";  (adjust path to your project) */
+
+.profile-hero,
+.profile-section {
+    --p-bg: #ffffff;
+    --p-border: #e8eaf0;
+    --p-text: #111827;
+    --p-muted: #6b7280;
+    --p-accent: #4f46e5;
+    --p-accent-soft: #eef2ff;
+    --p-ok: #059669;
+    --p-ok-soft: #ecfdf5;
+    --p-bad: #dc2626;
+    --p-bad-soft: #fef2f2;
+}
+
+/* ---------- Hero ---------- */
+.profile-hero {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 120px 32px 28px;
+    margin-bottom: 28px;
+    background: var(--p-bg);
+    border: 1px solid var(--p-border);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 8px 24px rgba(16, 24, 40, 0.04);
+    overflow: hidden;
+}
+
+/* gradient banner behind the avatar */
+.profile-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 96px;
+    background: linear-gradient(120deg, #4f46e5 0%, #7c3aed 55%, #db2777 100%);
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    z-index: 1;
+    margin-top: -36px;
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 104px;
+    height: 104px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid #fff;
+    box-shadow: 0 6px 16px rgba(16, 24, 40, 0.15);
+    display: block;
+}
+
+.profile-avatar-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: #fff;
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.profile-hero-info {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.profile-hero-info h2 {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--p-text);
+}
+
+.profile-hero-info p {
+    margin: 0 0 8px;
+    color: var(--p-muted);
+    font-size: 0.95rem;
+}
+
+.profile-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    width: fit-content;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.profile-status.active {
+    background: var(--p-ok-soft);
+    color: var(--p-ok);
+}
+
+.profile-status.inactive {
+    background: var(--p-bad-soft);
+    color: var(--p-bad);
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 20%, transparent);
+}
+
+/* ---------- Sections ---------- */
+.profile-section {
+    padding: 28px 32px;
+    margin-bottom: 28px;
+    background: var(--p-bg);
+    border: 1px solid var(--p-border);
+    border-radius: 20px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+}
+
+.profile-section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.profile-section-header h2 {
+    margin: 4px 0 0;
+    font-size: 1.25rem;
+    color: var(--p-text);
+}
+
+.profile-section .dashboard-eyebrow {
+    margin: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: var(--p-accent);
+}
+
+.profile-edit-button {
+    padding: 10px 18px;
+    border: 1px solid var(--p-border);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--p-text);
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.profile-edit-button:hover {
+    background: var(--p-accent);
+    border-color: var(--p-accent);
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+}
+
+/* ---------- Detail cards ---------- */
+.profile-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+}
+
+.profile-detail-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px 18px;
+    background: #f9fafb;
+    border: 1px solid var(--p-border);
+    border-radius: 14px;
+    transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.profile-detail-card:hover {
+    border-color: #c7d2fe;
+    background: var(--p-accent-soft);
+}
+
+.profile-detail-card span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--p-muted);
+}
+
+.profile-detail-card strong {
+    font-size: 1rem;
+    color: var(--p-text);
+    word-break: break-word;
+}
+
+/* ---------- Security status cards ---------- */
+.profile-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+}
+
+.profile-status-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 16px 18px;
+    border: 1px solid var(--p-border);
+    border-radius: 14px;
+    background: #fff;
+}
+
+.profile-status-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.profile-status-card.ok .profile-status-icon {
+    background: var(--p-ok-soft);
+    color: var(--p-ok);
+}
+
+.profile-status-card.bad .profile-status-icon {
+    background: var(--p-bad-soft);
+    color: var(--p-bad);
+}
+
+.profile-status-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.profile-status-text span {
+    font-size: 0.78rem;
+    color: var(--p-muted);
+}
+
+.profile-status-text strong {
+    font-size: 0.98rem;
+    color: var(--p-text);
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 640px) {
+    .profile-hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 110px 20px 24px;
+    }
+
+    .profile-hero-info {
+        align-items: center;
+    }
+
+    .profile-section {
+        padding: 20px;
+    }
+
+    .profile-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
