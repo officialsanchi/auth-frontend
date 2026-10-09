@@ -172,7 +172,7 @@ const Login = () => {
 
         setIsLoading(true);
 
-        try {
+       try {
             console.log("Sending login request:", {
                 identifier: loginPayload.identifier,
                 password: "********",
@@ -182,16 +182,10 @@ const Login = () => {
 
             console.log("Login successful:", response.data);
 
-            /*
-             * Authentication is NOT stored in localStorage
-             * or sessionStorage.
-             *
-             * The backend is responsible for maintaining
-             * the authenticated session/cookie.
-             *
-             * Axios uses withCredentials: true in api.js
-             * so browser cookies can be sent with requests.
-             */
+            const token = response.data?.token || response.data?.accessToken;
+            if (token) {
+                localStorage.setItem("token", token);
+            }
 
             navigate("/dashboard", {
                 replace: true,
